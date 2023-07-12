@@ -42,20 +42,12 @@ public class SwiftSocurePlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "launchSocure":
             let socureSdkKey: String = arguments["sdkKey"] as! String
-            var flowConfig: [String: Any]?
-            do {
-                flowConfig = try (arguments["flow"] as? String)?.convertToDictionary()
-            } catch {
-                 let errorDict = ["errorMessage": "Invalid config data", "statusCode": "7109"]
-                 let responseError = errorDict.convertToStr()
-                 result(responseError)
-                return
-            }
-            //controller.showToast(message: "Hey it has reached here", font: .systemFont(ofSize: 12.0))
+            let config = ["document_type": arguments["documentType"] as? String]
+
             objDocVHelper.launch(
                     socureSdkKey,
                     presentingViewController: controller,
-                    config: flowConfig,
+                    config: config,
                     completionBlock: resultHandler
             )
             return

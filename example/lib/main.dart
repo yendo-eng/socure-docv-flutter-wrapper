@@ -36,6 +36,7 @@ class _MyAppState extends State<MyApp> {
             String key = "<INSERT YOUR KEY HERE>";
             await _socurePlugin.launchSocure(
               sdkKey: key,
+              documentType: 'license', // 'license', 'passport'
               onSuccess: (successResult) {
                 debugPrint("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                 print(successResult.toString());

@@ -26,9 +26,9 @@ abstract class SocurePlatform extends PlatformInterface {
 
   Future<void> launchSocure({
     required String sdkKey,
+    required String documentType,
     required OnSuccessCallback onSuccess,
     required OnErrorCallback onError,
-    String? flow,
   }) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }

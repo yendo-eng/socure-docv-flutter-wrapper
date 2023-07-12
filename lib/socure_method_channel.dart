@@ -17,15 +17,15 @@ class MethodChannelSocure extends SocurePlatform {
   @override
   Future<void> launchSocure({
     required String sdkKey,
+    required String documentType,
     required OnSuccessCallback onSuccess,
     required OnErrorCallback onError,
-    String? flow,
   }) async {
     final result = await methodChannel.invokeMethod<String>(
       'launchSocure',
       <String, dynamic>{
         'sdkKey': sdkKey,
-        'flow': flow,
+        'documentType': documentType,
       },
     );
     // string to json

@@ -46,7 +46,7 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
             "launchSocure" -> {
                 try {
                     val socureSdkKey: String = call.argument("sdkKey")!!
-                    var config: String? = call.argument("flow")
+                    var config: SocureDocVHelper.getConfigJson(hashMapOf("document_type" to call.argument("documentType")))
                     this.onSuccessCallback = object : SuccessCallBack {
                         override fun invoke(data: String) {
                             result.success(data)
