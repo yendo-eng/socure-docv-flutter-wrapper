@@ -1,23 +1,19 @@
-// To parse this JSON data, do
-//
-//     final socureSuccessResult = socureSuccessResultFromJson(jsonString);
-
 import 'dart:convert';
 
-SocureSuccessResult socureSuccessResultFromJson(String str) =>
-    SocureSuccessResult.fromJson(json.decode(str));
+DocVSuccessResult docVSuccessResultFromJson(String str) =>
+    DocVSuccessResult.fromJson(json.decode(str));
 
-String socureSuccessResultToJson(SocureSuccessResult data) =>
+String docVSuccessResultToJson(DocVSuccessResult data) =>
     json.encode(data.toJson());
 
-class SocureSuccessResult {
+class DocVSuccessResult {
   String? docUuid;
   String? sessionId;
   ExtractedData? extractedData;
   Capture? captureData;
   Capture? capturedImages;
 
-  SocureSuccessResult({
+  DocVSuccessResult({
     this.docUuid,
     this.sessionId,
     this.extractedData,
@@ -25,8 +21,8 @@ class SocureSuccessResult {
     this.capturedImages,
   });
 
-  factory SocureSuccessResult.fromJson(Map<String, dynamic> json) =>
-      SocureSuccessResult(
+  factory DocVSuccessResult.fromJson(Map<String, dynamic> json) =>
+      DocVSuccessResult(
         docUuid: json["docUUID"],
         sessionId: json["sessionId"],
         extractedData: json["extractedData"] == null
@@ -50,7 +46,7 @@ class SocureSuccessResult {
 
   @override
   String toString() {
-    return 'SocureSuccessResult(docUuid: $docUuid, sessionId: $sessionId, extractedData: $extractedData, captureData: $captureData, capturedImages: $capturedImages)';
+    return 'DocVSuccessResult(docUuid: $docUuid, sessionId: $sessionId, extractedData: $extractedData, captureData: $captureData, capturedImages: $capturedImages)';
   }
 }
 

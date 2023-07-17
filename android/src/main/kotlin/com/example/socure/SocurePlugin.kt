@@ -6,12 +6,16 @@ import android.content.Intent
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.annotation.NonNull
 import com.socure.docv.capturesdk.api.SocureDocVHelper
 import com.socure.docv.capturesdk.api.SocureDocVHelper.getResult
 import com.socure.docv.capturesdk.common.utils.ResultListener
 import com.socure.docv.capturesdk.common.utils.ScanError
 import com.socure.docv.capturesdk.common.utils.ScannedData
+import com.socure.idplus.devicerisk.androidsdk.model.*
+import com.socure.idplus.devicerisk.androidsdk.sensors.SocureSigmaDevice
+import com.socure.idplus.devicerisk.androidsdk.uilts.SocureFingerPrintContext
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -25,14 +29,17 @@ import org.json.JSONObject
 
 
 /** SocurePlugin */
-class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
+class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener, SocureSigmaDevice.DataUploadCallback {
     private lateinit var channel: MethodChannel
     private lateinit var act: Activity
     private lateinit var ctx: Context
     private val REQUEST_CODE_FOR_SOCURE = 1999
 
-    private var onSuccessCallback: SuccessCallBack? = null
-    private var onErrorCallback: ErrorCallBack? = null
+    private var onDocVSuccessCallback: DocVSuccessCallBack? = null
+    private var onDocVErrorCallback: DocVErrorCallBack? = null
+
+    private var onFingerprintSuccessCallback: FingerprintSuccessCallBack? = null
+    private var onFingerprintErrorCallback: FingerprintErrorCallBack? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "socure")
@@ -43,16 +50,16 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
-            "launchSocure" -> {
+            "docV" -> {
                 try {
                     val socureSdkKey: String = call.argument("sdkKey")!!
                     var config: String? = SocureDocVHelper.getConfigJson(hashMapOf("document_type" to call.argument("documentType")!!))
-                    this.onSuccessCallback = object : SuccessCallBack {
+                    this.onDocVSuccessCallback = object : DocVSuccessCallBack {
                         override fun invoke(data: String) {
                             result.success(data)
                         }
                     }
-                    this.onErrorCallback = object : ErrorCallBack {
+                    this.onDocVErrorCallback = object : DocVErrorCallBack {
                         override fun invoke(data: String) {
                             result.success(data)
                         }
@@ -60,7 +67,29 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
                     val intent = SocureDocVHelper.getIntent(act, socureSdkKey, config)
                     act.startActivityForResult(intent, REQUEST_CODE_FOR_SOCURE)
                 } catch (e: Exception) {
-                    result.error("ERROR", "An error occurred when launch socure", e)
+                    result.error("ERROR", "An error occurred when launching socure", e)
+                }
+            }
+            "fingerprint" -> {
+                try {
+                    val socureSdkKey: String = call.argument("sdkKey")!!
+                    val socureSigmaDevice = SocureSigmaDevice()
+                    val config = SocureSigmaDeviceConfig(socureSdkKey, false, "", (this.act as FragmentActivity))
+                    val options = SocureFingerPrintOptions(false, SocureFingerPrintContext.Home(), null)
+                    this.onFingerprintSuccessCallback = object : FingerprintSuccessCallBack {
+                        override fun invoke(data: String) {
+                            result.success(data)
+                        }
+                    }
+                    this.onFingerprintErrorCallback = object : FingerprintErrorCallBack {
+                        override fun invoke(data: String) {
+                            result.success(data)
+                        }
+                    }
+                    
+                    socureSigmaDevice.fingerPrint(config, options, this)
+                } catch (e: Exception) {
+                    result.error("ERROR", "An error occurred when fingerprinting", e)
                 }
             }
             else -> {
@@ -74,13 +103,11 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
             intent?.let {
                 getResult(intent, object : ResultListener {
                     override fun onSuccess(scannedData: ScannedData) {
-//                        Log.d("SOCURE", convertResultToReadableMap(scannedData).toString())
-                        onSuccessCallback?.invoke(convertResultToReadableMap(scannedData))
+                        onDocVSuccessCallback?.invoke(convertResultToReadableMap(scannedData))
                     }
 
                     override fun onError(scanError: ScanError) {
-//                        Log.d("SOCURE", convertErrorToReadableMap(scanError).toString())
-                        onErrorCallback?.invoke(convertErrorToReadableMap(scanError))
+                        onDocVErrorCallback?.invoke(convertErrorToReadableMap(scanError))
                     }
                 })
             }
@@ -167,4 +194,11 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
         return responseMap.toMap()
     }
 
+    override fun dataUploadFinished(uploadResult: SocureFingerprintResult) {
+        onFingerprintSuccessCallback?.invoke(uploadResult.deviceSessionID!!)
+    }
+
+    override fun onError(errorType: SocureSigmaDevice.SocureSigmaDeviceError, errorMessage: String?) {
+        onFingerprintErrorCallback?.invoke(errorMessage!!)
+    }
 }

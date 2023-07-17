@@ -1,30 +1,26 @@
-// To parse this JSON data, do
-//
-//     final socureErrorResult = socureErrorResultFromJson(jsonString);
-
 import 'dart:convert';
 
-SocureErrorResult socureErrorResultFromJson(String str) =>
-    SocureErrorResult.fromJson(json.decode(str));
+DocVErrorResult docVErrorResultFromJson(String str) =>
+    DocVErrorResult.fromJson(json.decode(str));
 
-String socureErrorResultToJson(SocureErrorResult data) =>
+String docVErrorResultToJson(DocVErrorResult data) =>
     json.encode(data.toJson());
 
-class SocureErrorResult {
+class DocVErrorResult {
   CapturedImages? capturedImages;
   String? errorMessage;
   String? sessionId;
   String? statusCode;
 
-  SocureErrorResult({
+  DocVErrorResult({
     this.capturedImages,
     this.errorMessage,
     this.sessionId,
     this.statusCode,
   });
 
-  factory SocureErrorResult.fromJson(Map<String, dynamic> json) =>
-      SocureErrorResult(
+  factory DocVErrorResult.fromJson(Map<String, dynamic> json) =>
+      DocVErrorResult(
         capturedImages: json["capturedImages"] == null
             ? null
             : CapturedImages.fromJson(json["capturedImages"]),
@@ -42,7 +38,7 @@ class SocureErrorResult {
 
   @override
   String toString() {
-    return 'SocureErrorResult(capturedImages: ${capturedImages.toString()}, errorMessage: $errorMessage, sessionId: $sessionId, statusCode: $statusCode)';
+    return 'DocVErrorResult(capturedImages: ${capturedImages.toString()}, errorMessage: $errorMessage, sessionId: $sessionId, statusCode: $statusCode)';
   }
 }
 

@@ -15,36 +15,50 @@ class MethodChannelSocure extends SocurePlatform {
   final methodChannel = const MethodChannel('socure');
 
   @override
-  Future<void> launchSocure({
+  Future<void> socureDocV({
     required String sdkKey,
     required String documentType,
-    required OnSuccessCallback onSuccess,
-    required OnErrorCallback onError,
+    required OnDocVSuccessCallback onSuccess,
+    required OnDocVErrorCallback onError,
   }) async {
     final result = await methodChannel.invokeMethod<String>(
-      'launchSocure',
+      'docV',
       <String, dynamic>{
         'sdkKey': sdkKey,
         'documentType': documentType,
       },
     );
-    // string to json
     if (result != null) {
-      // print("####################");
-      // print("##########$result##########");
-      // print("####################");
       Map<String, dynamic> json = jsonDecode(result);
-      // if json contains key docUUID then it is success
       if (json.containsKey('docUUID')) {
-        // convert json to model
-        final socureSuccessResult = SocureSuccessResult.fromJson(json);
-        // call success callback
-        onSuccess(socureSuccessResult);
+        final docVSuccessResult = DocVSuccessResult.fromJson(json);
+        onSuccess(docVSuccessResult);
       } else {
-        // convert json to model
-        final socureErrorResult = SocureErrorResult.fromJson(json);
-        onError(socureErrorResult);
+        final docVErrorResult = DocVErrorResult.fromJson(json);
+        onError(docVErrorResult);
       }
+    }
+  }
+
+  @override
+  Future<void> socureFingerprint({
+    required String sdkKey,
+    required OnFingerprintSuccessCallback onSuccess,
+    required OnFingerprintErrorCallback onError,
+  }) async {
+    final result = await methodChannel.invokeMethod<String>(
+      'fingerprint',
+      <String, dynamic>{
+        'sdkKey': sdkKey,
+      },
+    );
+    print(result);
+    // Result is JWT or error message
+    // Check if contains('.') or can be decoded?
+    if (result != null) {
+      onSuccess(result);
+    } else {
+      //onError(result);
     }
   }
 }

@@ -1,9 +1,17 @@
 package com.example.socure
 
-interface SuccessCallBack {
+interface DocVSuccessCallBack {
     fun invoke(data: String)
 }
 
-interface ErrorCallBack {
+interface DocVErrorCallBack {
+    fun invoke(data: String)
+}
+
+interface FingerprintSuccessCallBack {
+    fun invoke(data: String)
+}
+
+interface FingerprintErrorCallBack {
     fun invoke(data: String)
 }

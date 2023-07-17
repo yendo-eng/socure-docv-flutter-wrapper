@@ -24,12 +24,20 @@ abstract class SocurePlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<void> launchSocure({
+  Future<void> socureDocV({
     required String sdkKey,
     required String documentType,
-    required OnSuccessCallback onSuccess,
-    required OnErrorCallback onError,
+    required OnDocVSuccessCallback onSuccess,
+    required OnDocVErrorCallback onError,
   }) {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+    throw UnimplementedError('socureDocV() has not been implemented.');
+  }
+
+  Future<void> socureFingerprint({
+    required String sdkKey,
+    required OnFingerprintSuccessCallback onSuccess,
+    required OnFingerprintErrorCallback onError,
+  }) {
+    throw UnimplementedError('socureFingerprint() has not been implemented.');
   }
 }
