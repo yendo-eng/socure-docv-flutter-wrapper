@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import SocureDocV
+import DeviceRisk
 
 public class SwiftSocurePlugin: NSObject, FlutterPlugin {
     let objDocVHelper = SocureDocVHelper()
@@ -29,18 +30,16 @@ public class SwiftSocurePlugin: NSObject, FlutterPlugin {
                     let responseData = data.dictionary.convertToStr()
                     result(responseData)
                     break;
-                    // self.controller.showToast(message: "SUCCESS RESULTS \(result.dictionary)", font: .systemFont(ofSize: 12.0))
                 case .failure(let error):
                     let responseError = error.dictionary.convertToStr()
                     result(responseError)
                     break;
-                    // self.controller.showToast(message: "ERROR RESULTS \(responseError)", font: .systemFont(ofSize: 12.0))
                 }
             }
         }
         let arguments = call.arguments as! Dictionary<String, Any>
         switch call.method {
-        case "launchSocure":
+        case "docV":
             let socureSdkKey: String = arguments["sdkKey"] as! String
             let config = ["document_type": arguments["documentType"] as? String]
 
@@ -51,13 +50,25 @@ public class SwiftSocurePlugin: NSObject, FlutterPlugin {
                     completionBlock: resultHandler
             )
             return
+        case "fingerprint":
+            let socureSdkKey: String = arguments["sdkKey"] as! String
+
+            let config = SocureSigmaDeviceConfig(SDKKey: socureSdkKey)
+            let options = SocureFingerprintOptions(context: .homepage)
+
+            SocureSigmaDevice.fingerprint(config: config, options: options) { fingerprintResult, error in
+                if let deviceSessionID = fingerprintResult?.deviceSessionID {
+                    result(deviceSessionID)
+                } else if let _ = error {
+                    result("Socure Fingerprint - Something went wrong")
+                }
+            }
+            return
         default:
             result(FlutterMethodNotImplemented)
             return
         }
-
     }
-
 }
 
 extension String {
@@ -84,53 +95,3 @@ extension Dictionary {
         }
     }
 }
-
-//extension Result<ScannedData, ScanError> {
-
-//    func getItem() -> dictionary<String, Any> {
-//        switch self {
-//        case .success:
-//            return DisplaySingle(banner: banner)
-//        case .failure:
-//            return DisplaySlider(banner: banner)
-//        }
-//    }
-//}
-
-
-extension UIViewController {
-
-    func showToast(message: String, font: UIFont) {
-
-        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width / 2 - 75, y: self.view.frame.size.height - 100, width: 300, height: 35))
-        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        toastLabel.textColor = UIColor.white
-        toastLabel.font = font
-        toastLabel.textAlignment = .center;
-        toastLabel.text = message
-        toastLabel.alpha = 1.0
-        toastLabel.layer.cornerRadius = 10;
-        toastLabel.clipsToBounds = true
-        self.view.addSubview(toastLabel)
-        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
-            toastLabel.alpha = 0.0
-        }, completion: { (isCompleted) in
-            toastLabel.removeFromSuperview()
-        })
-    }
-}
-
-
-// extension Result {
-
-//     func get() throws -> Value {
-//         switch self {
-//         case .success(let value):
-//             return value
-//         case .failure(let error):
-//             throw error
-//         }
-//     }
-// }
-
-

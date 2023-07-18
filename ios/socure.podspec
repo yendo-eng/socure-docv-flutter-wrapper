@@ -19,6 +19,7 @@ A new Flutter project.
 
   # dependency
   s.dependency "SocureDocV", "3.2.0"
+  s.dependency "SocureDeviceRisk", "2.0.3"
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
