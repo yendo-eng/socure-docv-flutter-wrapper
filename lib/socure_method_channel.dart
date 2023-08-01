@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socure/models/socure_error_result.dart';
 import 'package:socure/models/socure_success_result.dart';
 import 'package:socure/utils/callbacks.dart';
@@ -54,59 +55,14 @@ class MethodChannelSocure extends SocurePlatform {
     );
     // Result is JWT or error message
     // Check if contains('.') or can be decoded?
+    if (result == null) {
+      onError('Invalid JWT Token.');
+    }
     try {
-      _parseJwt(result);
-      onSuccess(result!);
-    } on JwtException catch (error) {
-      onError(error.message);
+      JwtDecoder.decode(result!);
+      onSuccess(result);
+    } catch (_) {
+      onError('Invalid JWT Token.');
     }
-  }
-
-  Map<String, dynamic> _parseJwt(String? token) {
-    if (token == null) {
-      throw JwtException('Invalid JWT token');
-    }
-    final parts = token.split('.');
-    if (parts.length != 3) {
-      throw JwtException('Invalid JWT token');
-    }
-
-    final payload = _decodeBase64(parts[1]);
-    final payloadMap = json.decode(payload);
-    if (payloadMap is! Map<String, dynamic>) {
-      throw JwtException('Invalid JWT payload');
-    }
-
-    return payloadMap;
-  }
-
-  String _decodeBase64(String str) {
-    String output = str.replaceAll('-', '+').replaceAll('_', '/');
-
-    switch (output.length % 4) {
-      case 0:
-        break;
-      case 2:
-        output += '==';
-        break;
-      case 3:
-        output += '=';
-        break;
-      default:
-        throw Exception('Illegal base64url string!"');
-    }
-
-    return utf8.decode(base64Url.decode(output));
-  }
-}
-
-class JwtException implements Exception {
-  final String message;
-
-  JwtException(this.message);
-
-  @override
-  String toString() {
-    return message;
   }
 }
