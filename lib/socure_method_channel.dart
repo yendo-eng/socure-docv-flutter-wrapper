@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socure/models/socure_error_result.dart';
 import 'package:socure/models/socure_success_result.dart';
 import 'package:socure/utils/callbacks.dart';
@@ -52,13 +53,16 @@ class MethodChannelSocure extends SocurePlatform {
         'sdkKey': sdkKey,
       },
     );
-    print(result);
     // Result is JWT or error message
     // Check if contains('.') or can be decoded?
-    if (result != null) {
+    if (result == null) {
+      return onError('Invalid JWT Token.');
+    }
+    try {
+      JwtDecoder.decode(result!);
       onSuccess(result);
-    } else {
-      //onError(result);
+    } catch (_) {
+      onError('Invalid JWT Token.');
     }
   }
 }
