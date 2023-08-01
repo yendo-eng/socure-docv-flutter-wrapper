@@ -56,7 +56,7 @@ class MethodChannelSocure extends SocurePlatform {
     // Result is JWT or error message
     // Check if contains('.') or can be decoded?
     if (result == null) {
-      onError('Invalid JWT Token.');
+      return onError('Invalid JWT Token.');
     }
     try {
       JwtDecoder.decode(result!);
