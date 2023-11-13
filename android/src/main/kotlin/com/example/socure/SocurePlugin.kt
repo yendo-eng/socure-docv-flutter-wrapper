@@ -74,7 +74,7 @@ class SocurePlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegi
                 try {
                     val socureSdkKey: String = call.argument("sdkKey")!!
                     val socureSigmaDevice = SocureSigmaDevice()
-                    val config = SocureSigmaDeviceConfig(socureSdkKey, false, "", (this.act as FragmentActivity))
+                    val config = SocureSigmaDeviceConfig(socureSdkKey, false, false, "", "", (this.act as FragmentActivity))
                     val options = SocureFingerPrintOptions(false, SocureFingerPrintContext.Home(), null)
                     this.onFingerprintSuccessCallback = object : FingerprintSuccessCallBack {
                         override fun invoke(data: String) {
