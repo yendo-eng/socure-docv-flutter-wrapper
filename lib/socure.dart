@@ -6,12 +6,14 @@ class Socure {
   Future<void> socureDocV({
     required String sdkKey,
     required String documentType,
+    required String language,
     required OnDocVSuccessCallback onSuccess,
     required OnDocVErrorCallback onError,
   }) {
     return SocurePlatform.instance.socureDocV(
       sdkKey: sdkKey,
       documentType: documentType,
+      language: language,
       onSuccess: onSuccess,
       onError: onError,
     );

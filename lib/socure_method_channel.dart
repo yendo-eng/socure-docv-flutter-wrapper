@@ -19,6 +19,7 @@ class MethodChannelSocure extends SocurePlatform {
   Future<void> socureDocV({
     required String sdkKey,
     required String documentType,
+    required String language,
     required OnDocVSuccessCallback onSuccess,
     required OnDocVErrorCallback onError,
   }) async {
@@ -27,6 +28,7 @@ class MethodChannelSocure extends SocurePlatform {
       <String, dynamic>{
         'sdkKey': sdkKey,
         'documentType': documentType,
+        'language': language,
       },
     );
     if (result != null) {

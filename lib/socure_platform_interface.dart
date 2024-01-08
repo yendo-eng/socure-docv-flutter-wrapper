@@ -27,6 +27,7 @@ abstract class SocurePlatform extends PlatformInterface {
   Future<void> socureDocV({
     required String sdkKey,
     required String documentType,
+    required String language,
     required OnDocVSuccessCallback onSuccess,
     required OnDocVErrorCallback onError,
   }) {
