@@ -59,7 +59,7 @@ class MethodChannelSocure extends SocurePlatform {
       return onError('Invalid JWT Token.');
     }
     try {
-      JwtDecoder.decode(result!);
+      JwtDecoder.decode(result);
       onSuccess(result);
     } catch (_) {
       onError('Invalid JWT Token.');

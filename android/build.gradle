@@ -49,5 +49,5 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.github.socure-inc:socure-docv:4.3.0"
-    implementation 'com.github.socure-inc:device-risk-android-sdk:2.0.4'
+    implementation 'com.github.socure-inc:device-risk-android-sdk:3.0.0'
 }
