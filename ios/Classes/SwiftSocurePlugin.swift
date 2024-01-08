@@ -41,7 +41,10 @@ public class SwiftSocurePlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "docV":
             let socureSdkKey: String = arguments["sdkKey"] as! String
-            let config = ["document_type": arguments["documentType"] as? String]
+            let documentType: String = arguments["documentType"] as! String
+            let language: String = arguments["language"] as! String
+            
+            let config = ["document_type": documentType, "language": language]
 
             objDocVHelper.launch(
                     socureSdkKey,

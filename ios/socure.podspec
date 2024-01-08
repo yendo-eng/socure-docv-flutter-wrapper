@@ -18,7 +18,7 @@ A new Flutter project.
   s.platform = :ios, '13.0'
 
   # dependency
-  s.dependency "SocureDocV", "4.2.0"
+  s.dependency "SocureDocV", "4.3.0"
   s.dependency "SocureDeviceRisk", "3.0.0"
 
   # Flutter.framework does not contain a i386 slice.
