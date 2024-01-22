@@ -1,5 +1,4 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:socure/utils/callbacks.dart';
 
 import 'socure_method_channel.dart';
 
@@ -24,20 +23,16 @@ abstract class SocurePlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<void> socureDocV({
+  Future<String?> socureDocV({
     required String sdkKey,
     required String documentType,
     required String language,
-    required OnDocVSuccessCallback onSuccess,
-    required OnDocVErrorCallback onError,
   }) {
     throw UnimplementedError('socureDocV() has not been implemented.');
   }
 
-  Future<void> socureFingerprint({
+  Future<dynamic> socureFingerprint({
     required String sdkKey,
-    required OnFingerprintSuccessCallback onSuccess,
-    required OnFingerprintErrorCallback onError,
   }) {
     throw UnimplementedError('socureFingerprint() has not been implemented.');
   }

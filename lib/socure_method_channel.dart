@@ -1,11 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:socure/models/socure_error_result.dart';
-import 'package:socure/models/socure_success_result.dart';
-import 'package:socure/utils/callbacks.dart';
+import 'package:socure/models/fingerprint_failure.dart';
+import 'package:socure/models/fingerprint_success.dart';
 
 import 'socure_platform_interface.dart';
 
@@ -16,12 +16,10 @@ class MethodChannelSocure extends SocurePlatform {
   final methodChannel = const MethodChannel('socure');
 
   @override
-  Future<void> socureDocV({
+  Future<String?> socureDocV({
     required String sdkKey,
     required String documentType,
     required String language,
-    required OnDocVSuccessCallback onSuccess,
-    required OnDocVErrorCallback onError,
   }) async {
     final result = await methodChannel.invokeMethod<String>(
       'docV',
@@ -34,20 +32,16 @@ class MethodChannelSocure extends SocurePlatform {
     if (result != null) {
       Map<String, dynamic> json = jsonDecode(result);
       if (json.containsKey('docUUID')) {
-        final docVSuccessResult = DocVSuccessResult.fromJson(json);
-        onSuccess(docVSuccessResult);
-      } else {
-        final docVErrorResult = DocVErrorResult.fromJson(json);
-        onError(docVErrorResult);
+        return json['docUUID'];
       }
     }
+
+    return null;
   }
 
   @override
-  Future<void> socureFingerprint({
+  Future<dynamic> socureFingerprint({
     required String sdkKey,
-    required OnFingerprintSuccessCallback onSuccess,
-    required OnFingerprintErrorCallback onError,
   }) async {
     final result = await methodChannel.invokeMethod<String>(
       'fingerprint',
@@ -58,13 +52,13 @@ class MethodChannelSocure extends SocurePlatform {
     // Result is JWT or error message
     // Check if contains('.') or can be decoded?
     if (result == null) {
-      return onError('Invalid JWT Token.');
+      return null;
     }
     try {
       JwtDecoder.decode(result);
-      onSuccess(result);
+      return FingerprintSuccess(result);
     } catch (_) {
-      onError('Invalid JWT Token.');
+      return FingerprintFailure(result);
     }
   }
 }
